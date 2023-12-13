@@ -13,20 +13,17 @@ contract BTC3 is ERC20("BTC3", "btc.33357.xyz") {
 
     modifier _check() {
         if (mintNumber != 0) {
-            unchecked {
-                if (mintNumber % 30 == 0) {
-                    uint256 blocks = block.number - lastCheckBlock;
-                    if (blocks > 1500) {
-                        difficulty -= 1;
-                    } else {
-                        difficulty += 1;
-                    }
-                    // difficulty = (difficulty * 1500) / blocks;
-                    lastCheckBlock = block.number;
+            if (mintNumber % 30 == 0) {
+                uint256 blocks = block.number - lastCheckBlock;
+                if (blocks > 1500) {
+                    difficulty -= 1;
+                } else {
+                    difficulty += 1;
                 }
-                if (mintNumber % 1050 == 0) {
-                    mintNumber /= 2;
-                }
+                lastCheckBlock = block.number;
+            }
+            if (mintNumber % 1050 == 0) {
+                mintNumber /= 2;
             }
         } else {
             lastCheckBlock = block.number;
@@ -51,11 +48,9 @@ contract BTC3 is ERC20("BTC3", "btc.33357.xyz") {
 
     function transfer(address to, uint256 amount) public virtual override returns (bool) {
         require(mintNumber >= 1050, "Transfer not allowed until mintNumber is reached");
-        unchecked {
-            uint256 fee = amount / 1000;
-            _transfer(msg.sender, address(this), fee);
-            _transfer(msg.sender, to, amount - fee);
-        }
+        uint256 fee = amount / 1000;
+        _transfer(msg.sender, address(this), fee);
+        _transfer(msg.sender, to, amount - fee);
         return true;
     }
 }
