@@ -4,7 +4,7 @@ pragma solidity ^0.8.17;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract BTC3 is ERC20("BTC3", "btc.33357.xyz") {
-    uint256 public mintAmount = 1000 ether;
+    uint256 public mintAmount = 10000 ether;
     uint256 public lastCheckBlock;
     uint256 public mintNumber;
     uint256 public difficulty = 30;
@@ -24,7 +24,7 @@ contract BTC3 is ERC20("BTC3", "btc.33357.xyz") {
                     // difficulty = (difficulty * 1500) / blocks;
                     lastCheckBlock = block.number;
                 }
-                if (mintNumber % 10500 == 0) {
+                if (mintNumber % 1050 == 0) {
                     mintNumber /= 2;
                 }
             }
@@ -50,7 +50,7 @@ contract BTC3 is ERC20("BTC3", "btc.33357.xyz") {
     }
 
     function transfer(address to, uint256 amount) public virtual override returns (bool) {
-        require(mintNumber >= 10500, "Transfer not allowed until mintNumber is reached");
+        require(mintNumber >= 1050, "Transfer not allowed until mintNumber is reached");
         unchecked {
             uint256 fee = amount / 1000;
             _transfer(msg.sender, address(this), fee);
