@@ -11,11 +11,13 @@ contract BTC3 is ERC20("BTC3", "btc.33357.xyz") {
 
     mapping(address => mapping(uint256 => bool)) public minedNonces;
 
+    event Minted(uint256 indexed mintNumber, address indexed sender, uint256 mintAmount, uint256 fee);
+
     modifier _check() {
         if (mintNumber != 0) {
-            if (mintNumber % 30 == 0) {
+            if (mintNumber % 10 == 0) {
                 uint256 blocks = block.number - lastCheckBlock;
-                if (blocks > 1500) {
+                if (blocks > 500) {
                     difficulty -= 1;
                 } else {
                     difficulty += 1;
@@ -37,10 +39,11 @@ contract BTC3 is ERC20("BTC3", "btc.33357.xyz") {
         require(_hash < ~uint256(0) >> difficulty, "Hash does not meet difficulty requirement");
 
         _mint(msg.sender, mintAmount);
-        uint256 balance = balanceOf(address(this));
-        if (balance > 0) {
-            _transfer(address(this), msg.sender, balance);
+        uint256 fee = balanceOf(address(this));
+        if (fee > 0) {
+            _transfer(address(this), msg.sender, fee);
         }
+        emit Minted(mintNumber, msg.sender, mintAmount, fee);
 
         minedNonces[msg.sender][nonce] = true;
         mintNumber++;
